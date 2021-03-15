@@ -1,21 +1,29 @@
 module.exports = function toReadable (number) {
     const first = ['','one','two','three','four', 'five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
     const tens = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
-    const mad = ['', 'thousand', 'million', 'billion', 'trillion'];
     let word = '';
     if (number === 0) return 'zero';
-    for (let i = 0; i < mad.length; i++) {
-        let tempNumber = number%(100*Math.pow(1000,i));
-        if (Math.floor(tempNumber/Math.pow(1000,i)) !== 0) {
-            if (Math.floor(tempNumber/Math.pow(1000,i)) < 20) {
-                word = first[Math.floor(tempNumber/Math.pow(1000,i))] + mad[i] + word;
-            } else {
-                word = tens[Math.floor(tempNumber/(10*Math.pow(1000,i)))] + ' ' + first[Math.floor(tempNumber/Math.pow(1000,i))%10] + mad[i] + word;
-            }
+    if (number > 0 && number < 20) {
+        return first[number];
+    } else if (number >= 20 && number < 100) {
+        const firstNumber = Math.floor(number / 10);
+        const secondNumber = number - (firstNumber * 10);
+            word =`${tens[firstNumber]} ${first[secondNumber]}`;
+            return word.trim();
+    } else if (number >= 100 && number < 1000){
+        const firstNumber = Math.floor(number / 100);
+        if (number % 100 === 0) {
+            word = `${first[firstNumber]} hundred`;
+            return word.trim();
         }
-
-        tempNumber = number%(Math.pow(1000,i+1));
-        if (Math.floor(tempNumber/(100*Math.pow(1000,i))) !== 0) word = first[Math.floor(tempNumber/(100*Math.pow(1000,i)))] + ' hundred ' + word;
+        const tenNumber = number - (firstNumber * 100);
+        if (tenNumber >= 1 && tenNumber < 20) {
+            word = `${first[firstNumber]} hundred ${first[tenNumber]}` ;
+            return word.trim();
+        }
+        const secondNumber = Math.floor(tenNumber / 10);
+        const thirdNumber = tenNumber - (secondNumber * 10);
+            word = `${first[firstNumber]} hundred ${tens[secondNumber]} ${first[thirdNumber]}`;
+            return word.trim();
     }
-    return word.trim();
 }
